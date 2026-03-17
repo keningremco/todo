@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f8;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    main {
+        margin-top: 100px;
+    }
+    .container {
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .todo {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .todo h1 {
+        margin: 0 0 10px 0;
+        font-size: 22px;
+    }
+
+    .todo img {
+        width: 100%;
+        max-height: 350px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .todo p {
+        margin: 0;
+        color: #555;
+    }
+
+    .status-btn {
+        width: 100%;
+        height: 12px;
+        border: none;
+        border-radius: 6px;
+        margin-bottom: 40px;
+    }
+    </style>
+    <style>
+/* klikbare afbeelding */
+.todo img {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.todo img:hover {
+    transform: scale(1.02);
+}
+
+/* fullscreen overlay */
+#lightbox {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+}
+
+#lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+}
+</style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <main>
+        <div class="container">
+            {% for todo in todos %}
+                <div class="todo" id="{{todo['id']}}">
+                    <h1>{{todo['titel']}}</h1>
+
+                    {% if todo['image'] != '' %}
+                        <img src="{{url_for('static', filename='uploads/' + todo['image'])}}">
+                    {% endif %}
+
+                    <p>{{todo['bijschrift']}}</p>
+                    <form action="/addlabel" method="POST">
+                        <input type="text" name="label" placeholder="add label">
+                        <input type="hidden" value="{{todo['id']}}" name="id">
+                        <button type="submit">add</button>
+                    </form>
+                    {% for label in labels %}
+                        <p>
+                        {% if label['todo_id'] == todo['id'] %} 
+                            {{label['naam']}}
+                        {% endif %}
+                        </p>
+                    {% endfor %}
+                    
+                    <a href="{{url_for('deletepost', id=todo['id'])}}">delete</a>
+                </div>
+
+                <button 
+                    class="status-btn"
+                    style="{% if todo['gedaan'] == 1 %}
+                        background-color: #2ecc71;
+                        {% else %}
+                        background-color: #e74c3c;
+                        {% endif %}">
+                </button>
+                
+            {% endfor %}
+        </div>
+        <div id="lightbox">
+            <img id="lightbox-img">
+        </div>
+    </main>
+    <script>
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightbox-img");
+
+document.querySelectorAll(".todo img").forEach(img => {
+    img.addEventListener("click", function() {
+        lightbox.style.display = "flex";
+        lightboxImg.src = this.src;
+    });
+});
+
+lightbox.addEventListener("click", function() {
+    lightbox.style.display = "none";
+});
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/static/sw.js");
+}
+</script>
+</body>
+</html>

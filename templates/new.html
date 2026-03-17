@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Foto Upload met Preview</title>
+<style>
+    body{
+        background-color: #f4f6f8;
+        display: flex;
+        margin: 0;
+        padding: 0;
+    }
+    #preview {
+        display: none;
+        max-width: 150px;       /* maximaal 150px breed */
+        max-height: 150px;      /* maximaal 150px hoog */
+        width: auto;            /* schaalt proportioneel */
+        height: auto;           /* schaalt proportioneel */
+        border-radius: 8px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        object-fit: cover;      /* vult de box netjes */
+    }
+    form {
+        padding: 40px;
+    }
+    .form-wrapper {
+        margin-top: 100px;
+        width: 100vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+<style>
+body {
+    background-color: #f4f6f8;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+/* Wrapper voor centreren */
+.form-wrapper {
+    margin-top: 100px;
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Inputs en labels */
+form input[type="text"],
+form input[type="file"],
+form button {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+/* Focus effect voor inputs */
+form input[type="text"]:focus,
+form input[type="file"]:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+/* Knop styling */
+form button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #2980b9;
+}
+
+/* Preview afbeelding */
+#preview {
+    display: none;
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+}
+
+/* Label styling */
+form label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+</style>
+</head>
+<body>
+{% include 'navbar.html' %}
+<div class="form-wrapper">
+    <form action="/makepost" method="POST" enctype="multipart/form-data">
+        <label for="titel">Titel:</label>
+        <input type="text" placeholder="titel" name="titel" required id="titel">
+
+        <label for="photo">Maak of kies een foto:</label>
+        
+        <input 
+            type="file" 
+            id="photo" 
+            name="photo" 
+            accept="image/*" 
+            capture="environment"
+            required
+        >
+        
+        <br>
+        <img id="preview" alt="Preview afbeelding">
+        <br><br>
+        <label for="bijschrift">Bijschrift:</label>
+        <input type="text" placeholder="bijschrift" name="bijschrift" required id="bijschrift">
+
+        <button type="submit">Verstuur</button>
+    </form>
+</div>
+<script>
+const input = document.getElementById("photo");
+const preview = document.getElementById("preview");
+
+input.addEventListener("change", function() {
+    const file = this.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+        alert("Selecteer een geldige afbeelding.");
+        input.value = "";
+        preview.style.display = "none";
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+    };
+
+    reader.readAsDataURL(file);
+});
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/static/sw.js");
+}
+</script>
+</body>
+</html>

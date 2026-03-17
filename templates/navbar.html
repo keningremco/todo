@@ -1,0 +1,32 @@
+<style>
+    nav {
+        width: 100vw;
+        height: 60px;
+        position: fixed;
+        border: 2px solid black;
+        background-color: #f4f6f8;
+        display: flex;
+        flex-direction: row;
+        z-index: 9998;
+    }
+
+
+    .link-wrapper {
+        height: 100%;
+        width: calc(100% / 7);
+        border: 2px solid black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+<nav>
+    <div class="link-wrapper"><a href="{{url_for('home')}}" class="link">Home</a></div>
+    <div class="link-wrapper"><a href="{{url_for('new')}}" class="link">New</a></div>
+    <div class="link-wrapper"><a href="{{url_for('home', label='Persoon1')}}" class="link">Persoon1</a></div>
+    <div class="link-wrapper"><a href="{{url_for('home', label='Persoon2')}}" class="link">Persoon2</a></div>
+    <div class="link-wrapper"><a href="{{url_for('home', label='Persoon3')}}" class="link">Persoon3</a></div>
+    <div class="link-wrapper"><a href="{{url_for('home', label='Persoon4')}}" class="link">Persoon4</a></div>
+    <div class="link-wrapper"><a href="{{url_for('home', label='Persoon5')}}" class="link">Persoon5</a></div>
+</nav>
